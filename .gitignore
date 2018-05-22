@@ -1,0 +1,5 @@
+# My configurations:
+.idea
+__pycache__
+myvenv
+venv
