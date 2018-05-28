@@ -8,6 +8,7 @@ from flask_login import LoginManager
 from flask_pagedown import PageDown
 from flask_admin import Admin
 from flask_babelex import Babel
+from .functions import MyAdminIndexView
 
 bootstrap = Bootstrap()
 mail = Mail()
@@ -18,7 +19,14 @@ login_manager = LoginManager()
 login_manager.session_protection = 'strong'
 login_manager.login_view = 'auth.login'
 
-admin = Admin(name='后台')
+admin = Admin(
+    name='后台',
+    template_mode='bootstrap3',
+    index_view=MyAdminIndexView(
+        name='首页',
+    )
+)
+
 babel = Babel()
 
 
