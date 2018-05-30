@@ -7,7 +7,7 @@ import os
 from .. import db, admin
 from jinja2 import Markup
 from ..functions import AccessControl
-from flask import redirect, url_for
+import datetime
 
 
 class MyModelView(ModelView, AccessControl):
@@ -40,7 +40,7 @@ class UserView(MyModelView):
 
     # 隐藏列
     column_exclude_list = (
-        '',
+        'about_me',
     )
 
     # 格式化列显示
@@ -49,6 +49,11 @@ class UserView(MyModelView):
         password_hash=lambda v, c, m, p: '**' + m.password_hash[-6:],
         about_me=lambda v, c, m, p: m.about_me[:7] + '...' if m.about_me else '',
         avatar_hash=lambda v, c, m, p: Markup('<img src="%s">' % m.gravatar(size=32)),
+        member_since=lambda v, c, m, p: Markup(
+            "<script>document.write(moment('%s').format('LL'));</script>") % m.member_since,
+        last_seen=lambda v, c, m, p: Markup(
+            "<script>document.write(moment('%s').format('LL'));</script>") % m.last_seen,
+
     )
 
 
@@ -94,6 +99,8 @@ class PostView(MyModelView):
     # 格式化列显示
     column_formatters = dict(
         body=lambda v, c, m, p: m.body[:100] + '...' if len(m.body) > 101 else m.body[:100],
+        timestamp=lambda v, c, m, p: Markup(
+            "<script>document.write(moment('%s').format('LLL'));</script>") % m.timestamp,
     )
 
 
@@ -118,6 +125,8 @@ class CommentView(MyModelView):
     # 格式化列显示
     column_formatters = dict(
         post=lambda v, c, m, p: (str(m.post))[0:50],
+        timestamp=lambda v, c, m, p: Markup(
+            "<script>document.write(moment('%s').format('LLL'));</script>") % m.timestamp,
     )
 
 
@@ -129,12 +138,3 @@ admin.add_view(CommentView(Comment, db.session, '评论'))
 basedir = os.path.dirname(os.path.dirname(__file__))
 static_path = os.path.join(basedir, 'static')
 admin.add_view(MyFileAdmin(static_path, '/static/', name='文件'))
-
-
-# class BackHome(BaseView):
-#     @expose('/backhome')
-#     def backhome(self):
-#         return redirect(url_for('main.index'))
-#
-#
-# admin.add_view(BackHome(name='blog'))

@@ -153,6 +153,34 @@ def edit(id):
     return render_template('edit_post.html', form=form)
 
 
+@main.route('/post/delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def delete_post(id):
+    post = Post.query.get_or_404(id)
+    comments = post.comments
+    if current_user != post.author and \
+            not current_user.can(Permission.ADMINISTER):
+        abort(403)
+    for comment in comments:
+        db.session.delete(comment)
+    db.session.delete(post)
+    flash("已删除")
+    return redirect(url_for('main.index'))
+
+
+@main.route('/release', methods=['GET', 'POST'])
+@login_required
+def release():
+    form = PostForm()
+    if current_user.can(Permission.WRITE_ARTICLES) and \
+            form.validate_on_submit():
+        post = Post(body=form.body.data,
+                    author=current_user._get_current_object())
+        db.session.add(post)
+        return redirect(url_for('.index'))
+    return render_template('release_post.html', form=form)
+
+
 @main.route('/follow/<username>')
 @login_required
 @permission_required(Permission.FOLLOW)

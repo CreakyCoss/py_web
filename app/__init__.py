@@ -22,6 +22,7 @@ login_manager.login_view = 'auth.login'
 admin = Admin(
     name='后台',
     template_mode='bootstrap3',
+    base_template='admin/mybase.html',
     index_view=MyAdminIndexView(
         name='首页',
     )
