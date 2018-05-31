@@ -17,10 +17,12 @@ class Config:
     FLASKY_MAIL_SUBJECT_PREFIX = '[Flasky]'
     FLASKY_MAIL_SENDER = 'kindle89757@163.com'
     FLASKY_ADMIN = os.environ.get('FLASKY_ADMIN')
-    FLASKY_POSTS_PER_PAGE = 20
+    FLASKY_POSTS_PER_PAGE = 10
     FLASKY_FOLLOWERS_PER_PAGE = 50
-    FLASKY_COMMENTS_PER_PAGE = 30
+    FLASKY_COMMENTS_PER_PAGE = 20
     FLASKY_SLOW_DB_QUERY_TIME = 0.5
+
+    BABEL_DEFAULT_LOCALE = 'zh_CN'
 
     @staticmethod
     def init_app(app):
